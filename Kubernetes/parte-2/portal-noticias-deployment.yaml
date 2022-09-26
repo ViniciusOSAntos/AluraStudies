@@ -1,11 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: portal-noticias-deploymnet
+  name: portal-noticias-deployment
 spec:
   template:
     metadata:
-      name:
+      name: portal-noticias
       labels:
         app: portal-noticias
     spec:
@@ -17,7 +17,24 @@ spec:
           envFrom:
             - configMapRef:
                 name: portal-configmap
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            periodSeconds: 10
+            failureThreshold: 3
+            initialDelaySeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            periodSeconds: 10
+            failureThreshold: 5
+            initialDelaySeconds: 3
+          resources:
+            requests:
+              cpu: 10m
   replicas: 3
   selector:
     matchLabels:
-      app: portal-noticias 
+      app: portal-noticias
